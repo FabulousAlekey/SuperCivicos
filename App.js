@@ -15,9 +15,7 @@ import * as Location from 'expo-location';
 import { render } from 'react-dom';
 import Settings from './screens/settings';
 
-function HomeScreen() {
-  return cam();
-}
+
 
 function ProfileScreen() {
   return (
