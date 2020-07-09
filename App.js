@@ -13,23 +13,10 @@ import { Camera } from 'expo-camera';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import { render } from 'react-dom';
-
-
+import Settings from './screens/settings';
 
 function HomeScreen() {
-  return (
-    cam()
-    
-  );
-}
-
-function SettingsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', margin: 10 }}>
-      <Text>Seccion de exploracion de videoreportes en un mapa etc etc</Text>
-    </View>
-    
-  );
+  return cam();
 }
 
 function ProfileScreen() {
@@ -42,7 +29,8 @@ function ProfileScreen() {
 
 async function checkMultiPermissions() {
   const { status, expires, permissions } = await Permissions.getAsync(
-    Permissions.CAMERA,Permissions.AUDIO_RECORDING,
+    Permissions.CAMERA,
+    Permissions.AUDIO_RECORDING
   );
   if (status !== 'granted') {
     alert('Hey! You have not enabled selected permissions');
@@ -50,10 +38,6 @@ async function checkMultiPermissions() {
 }
 
 function cam() {
-
-  
-
-
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
@@ -72,7 +56,7 @@ function cam() {
     text = errorMsg;
   } else if (location) {
     //console.log(location.coords.latitude+','+location.coords.longitude)
-    text = location.coords.latitude+','+location.coords.longitude;
+    text = location.coords.latitude + ',' + location.coords.longitude;
   }
 
   useEffect(() => {
@@ -98,7 +82,9 @@ function cam() {
     })();
 
     (async () => {
-      const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+      const { status } = await Permissions.askAsync(
+        Permissions.AUDIO_RECORDING
+      );
       setHasPermission(status === 'granted');
     })();
   }, []);
@@ -112,27 +98,29 @@ function cam() {
 
   const takePicture = async () => {
     if (cam.camera) {
-      const options = {quality: '720p' ,  maxDuration:30};
+      const options = { quality: '720p', maxDuration: 30 };
       const data = await cam.camera.recordAsync(options);
       console.log(data.uri);
-  }
-};
+    }
+  };
 
-
-
-
-  
   return (
     <View style={{ flex: 1 }}>
-      <Camera style={{ flex: .7  }} flashMode={0}  type={type} ref={ref => {cam.camera = ref;}}>
+      <Camera
+        style={{ flex: 0.7 }}
+        flashMode={0}
+        type={type}
+        ref={(ref) => {
+          cam.camera = ref;
+        }}
+      >
         <View
           style={{
             flex: 1,
             flexDirection: 'row',
             justifyContent: 'space-between',
-            
-          
-          }}>
+          }}
+        >
           <TouchableOpacity
             style={{
               flex: 0.2,
@@ -145,12 +133,19 @@ function cam() {
                   ? Camera.Constants.Type.front
                   : Camera.Constants.Type.back
               );
-
-              
-
-            }}>
-            <Text style={{ fontSize: 18, marginBottom: 10,marginLeft: 10, color: 'white' }}> Flip </Text>
-           
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                marginBottom: 10,
+                marginLeft: 10,
+                color: 'white',
+              }}
+            >
+              {' '}
+              Flip{' '}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -161,16 +156,21 @@ function cam() {
             }}
             onLongPress={() => {
               takePicture();
-                  
-            }}>
-
-              
-            
-            <Text style={{ fontSize: 18, marginBottom: 10,marginRight: 10, color: 'white' }}> Grabar </Text>
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                marginBottom: 10,
+                marginRight: 10,
+                color: 'white',
+              }}
+            >
+              {' '}
+              Grabar{' '}
+            </Text>
           </TouchableOpacity>
 
-          
-          
           <TouchableOpacity
             style={{
               flex: 0.2,
@@ -178,97 +178,76 @@ function cam() {
               alignItems: 'center',
             }}
             onPress={() => {
+              cam.camera.setState({ flashMode: 2 });
 
-              cam.camera.setState({ flashMode: 2})
-
-              
-
-              
-              
               setFlash(
                 flash === Camera.Constants.FlashMode.off
-                  ? cam.camera.setFlash(  2)
-                  : cam.camera.flashMode = 0
+                  ? cam.camera.setFlash(2)
+                  : (cam.camera.flashMode = 0)
               );
-              
-              
-              
+
               //console.log('flash '+flash)
-              
-            }}>
-            
-            <Text style={{ fontSize: 18, marginBottom: 10,marginRight: 10, color: 'white' }}> Flash </Text>
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                marginBottom: 10,
+                marginRight: 10,
+                color: 'white',
+              }}
+            >
+              {' '}
+              Flash{' '}
+            </Text>
           </TouchableOpacity>
         </View>
       </Camera>
-      <View style={{ flex: .3, justifyContent: 'center', alignItems: 'center', margin: 10 }}>
-      <Text style={styles.paragraph}>{text}</Text>
+      <View
+        style={{
+          flex: 0.3,
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: 10,
+        }}
+      >
+        <Text style={styles.paragraph}>{text}</Text>
       </View>
     </View>
-
-    
-    
   );
-
-  
-
-  
-
-  
-  
 }
-
-
-
-
- 
-
-
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
-  
   return (
     <NavigationContainer>
       <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
 
-          if (route.name === 'Home') {
-            iconName = focused ? 'ios-home' : 'ios-home';
-          } else if (route.name === 'Explorar') {
-            iconName = focused ? 'ios-map' : 'ios-map';
-          }else if (route.name === 'Perfil'){
-            iconName = focused ? 'ios-list-box' : 'ios-list';
-            
-          }
+            if (route.name === 'Home') {
+              iconName = focused ? 'ios-home' : 'ios-home';
+            } else if (route.name === 'Explorar') {
+              iconName = focused ? 'ios-map' : 'ios-map';
+            } else if (route.name === 'Perfil') {
+              iconName = focused ? 'ios-list-box' : 'ios-list';
+            }
 
-          // You can return any component that you like here!
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-      })}
-      tabBarOptions={{
-        activeTintColor: 'red',
-        inactiveTintColor: 'gray',
-      }}
+            // You can return any component that you like here!
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: 'red',
+          inactiveTintColor: 'gray',
+        }}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Explorar" component={SettingsScreen} />
-        <Tab.Screen name="Perfil" component={ProfileScreen} />
+        <Tab.Screen name='Home' component={HomeScreen} />
+        <Tab.Screen name='Explorar' component={Settings} />
+        <Tab.Screen name='Perfil' component={ProfileScreen} />
       </Tab.Navigator>
     </NavigationContainer>
-
-
-      
   );
-
-  
-
-  
-
-
 }
-
-
